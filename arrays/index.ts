@@ -89,3 +89,22 @@ const insertAt = <T>(
   Array.isArray(value)
     ? insertValuesAt(array, value, index)
     : insertValueAt(array, value, index);
+
+/**
+ * Removes a value or multiple values at a given index in an array and returns a new array without mutating the original.
+ * @param array the array to remove from.
+ * @param start the index to remove the value at.
+ * @param deleteCount the number of values to remove.
+ * @returns a new array without deleted values
+ */
+const removeAt = <T>(
+  array: Array<T>,
+  start: number,
+  deleteCount?: number
+): Array<T> => {
+  const newArray = [...array];
+
+  newArray.splice(start, deleteCount);
+
+  return newArray;
+};
