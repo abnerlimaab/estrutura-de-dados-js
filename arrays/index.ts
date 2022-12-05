@@ -108,3 +108,66 @@ const removeAt = <T>(
 
   return newArray;
 };
+
+/**
+ * Updates a value at a given index in an array and returns a new array without mutating the original.
+ * @param array the array to update.
+ * @param fn the function to update the value with.
+ * @param start the index to update the value at.
+ * @param updateCount the number of values to update.
+ * @returns a new array with the value updated at the given index
+ */
+const updateValueAtWithFn = <T>(
+  array: Array<T>,
+  fn: (value: T, index: number, array: Array<T>) => T,
+  start: number,
+  updateCount?: number
+): Array<T> => {
+  const count = updateCount ?? 1;
+
+  return array.map((value, index) =>
+    index >= start && index < start + count ? fn(value, index, array) : value
+  );
+};
+
+/**
+ * Updates a value at a given index in an array and returns a new array without mutating the original.
+ * @param array the array to update.
+ * @param value the value to update with.
+ * @param start the index to update the value at.
+ * @param updateCount the number of values to update.
+ * @returns a new array with the value updated at the given index
+ */
+const updateValueAt = <T>(
+  array: Array<T>,
+  value: T,
+  start: number,
+  updateCount?: number
+): Array<T> => {
+  const count = updateCount ?? 1;
+
+  return array.map((item, index) =>
+    index >= start && index < start + count ? value : item
+  );
+};
+
+/**
+ * Updates a value or multiple values at a given index in an array and returns a new array without mutating the original.
+ * @param array the array to update.
+ * @param valueOrFn the value or function to update with.
+ * @param start the index to update the value at.
+ * @param updateCount the number of values to update.
+ * @returns a new array with the value or values updated at the given index
+ * @see updateValueAt
+ * @see updateValueAtWithFn
+ */
+const updateAt = <T>(
+  array: Array<T>,
+  valueOrFn: T | ((value: T, index: number, array: Array<T>) => T),
+  start: number,
+  updateCount?: number
+): Array<T> =>
+  typeof valueOrFn === "function"
+    ? // @ts-ignore
+      updateValueAtWithFn(array, valueOrFn, start, updateCount)
+    : updateValueAt(array, valueOrFn, start, updateCount);
