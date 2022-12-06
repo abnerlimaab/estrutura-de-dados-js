@@ -25,7 +25,7 @@ const insertAtEnd = <T>(array: Array<T>, value: T): Array<T> => [
  * @param array the array to remove from
  * @returns a new array with the first element removed
  */
-const removeAtStart = <T>(array: Array<T>): Array<T> => array.slice(1);
+export const removeAtStart = <T>(array: Array<T>): Array<T> => array.slice(1);
 
 /**
  * Removes the last element from an array and returns a new array without mutating the original.
