@@ -1,0 +1,17 @@
+{
+  "name": "estrutura-de-dados-js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/abnerlimaab/estrutura-de-dados-js.git",
+  "author": "Abner Lima <abnerlima@pmenos.com.br>",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.9.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "ts-node-dev --ignore-watch node_modules src/index.ts"
+  }
+}

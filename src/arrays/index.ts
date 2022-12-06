@@ -81,7 +81,7 @@ const insertValuesAt = <T>(
  * @see insertValueAt
  * @see insertValuesAt
  */
-const insertAt = <T>(
+export const insertAt = <T>(
   array: Array<T>,
   value: T | Array<T>,
   index: number
