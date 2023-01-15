@@ -15,7 +15,7 @@ const insertAtStart = <T>(array: Array<T>, value: T): Array<T> => [
  * @param value the value to insert.
  * @returns a new array with the value inserted at the end
  */
-const insertAtEnd = <T>(array: Array<T>, value: T): Array<T> => [
+export const insertAtEnd = <T>(array: Array<T>, value: T): Array<T> => [
   ...array,
   value,
 ];
