@@ -32,7 +32,7 @@ export const removeAtStart = <T>(array: Array<T>): Array<T> => array.slice(1);
  * @param array the array to remove from
  * @returns a new array with the last element removed
  */
-const removeAtEnd = <T>(array: Array<T>): Array<T> => array.slice(0, -1);
+export const removeAtEnd = <T>(array: Array<T>): Array<T> => array.slice(0, -1);
 
 /**
  * Inserts a value at a given index in an array and returns a new array without mutating the original.

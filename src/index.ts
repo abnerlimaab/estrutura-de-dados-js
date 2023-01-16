@@ -1,34 +1,33 @@
-import queue from "./queue";
+import deck from "./deck";
 
-const q = queue([1, 2, 3]);
+const d = deck([1, 2, 3, 4, 5]);
 
-console.log("Queue:", q.getAll());
+console.log("deck: ", d.getAll());
 
-const q1 = q.enqueue(4);
+console.log("peekFront: ", d.peekFront());
 
-console.log("Queue after enqueue:", q1.getAll());
+console.log("peekBack: ", d.peekBack());
 
-const [q2, v] = q1.dequeue();
+const d2 = d.removeFront();
 
-console.log("Queue after dequeue:", q2.getAll());
-console.log("Dequeued value:", v);
+console.log("removeFront: ", d2.getAll());
 
-console.log("Peek:", q2.peek());
+const d3 = d2.removeBack();
 
-console.log("Size:", q2.size());
+console.log("removeBack: ", d3.getAll());
 
-console.log("Is empty:", q2.isEmpty());
+const d4 = d3.addFront(1);
 
-const q3 = q2.clear();
+console.log("addFront: ", d4.getAll());
 
-console.log("Queue after clear:", q3.getAll());
+const d5 = d4.addBack(5);
 
-console.log("Is empty:", q3.isEmpty());
+console.log("addBack: ", d5.getAll());
 
-console.log("Size:", q3.size());
+console.log("isEmpty: ", d5.isEmpty());
 
-const q4 = q3.enqueue([5, 6, 7]);
+console.log("size: ", d5.size());
 
-console.log("Queue after enqueue:", q4.getAll());
+console.log("toString: ", d5.toString());
 
-console.log("Queue to string:", q4.toString());
+console.log("clear: ", d5.clear().getAll());
