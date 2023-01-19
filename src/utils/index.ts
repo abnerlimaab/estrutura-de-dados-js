@@ -1,0 +1,1 @@
+export const defaultEquals = <T>(a: T, b: T) => a === b;
