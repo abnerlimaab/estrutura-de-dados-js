@@ -4,58 +4,178 @@ import { defaultEquals } from "../utils";
 interface _Node<T> {
   element: T;
   next: _Node<T> | null;
+  previous: _Node<T> | null;
+  disconnect: () => void;
+}
+
+enum Direction {
+  Forward = "forward",
+  Backward = "backward",
 }
 
 interface LinkedList<T> {
   push: (element: T) => LinkedList<T>;
-  insert: (element: T, index: number) => LinkedList<T>;
-  getElementAt: (index: number) => T | undefined;
-  remove: (element: T) => LinkedList<T>;
-  indexOf: (element: T) => number;
-  removeAt: (index: number) => LinkedList<T>;
-  isEmpty: () => boolean;
-  size: () => number;
+  insert?: (element: T, index: number) => LinkedList<T>;
+  getElementAt?: (index: number) => T | undefined;
+  remove?: (element: T) => LinkedList<T>;
+  indexOf?: (element: T) => number;
+  removeAt: (index: number) => [LinkedList<T>, T | null];
+  isEmpty: boolean;
+  size: number;
   toString: () => string;
 }
 
-const createNode = <T>(element: T) => ({ element, next: null });
+const createNode = <T>(element: T): _Node<T> => {
+  const [getNext, setNext] = createState<_Node<T> | null>(null);
+  const [getPrevious, setPrevious] = createState<_Node<T> | null>(null);
 
-const getLastNode = <T>(head: _Node<T> | null) => {
-  let current = head;
+  const node = () => ({
+    element,
+    get next() {
+      return getNext();
+    },
+    set next(next: _Node<T> | null) {
+      setNext(next);
+    },
+    get previous() {
+      return getPrevious();
+    },
+    set previous(previous: _Node<T> | null) {
+      setPrevious(previous);
+    },
+    disconnect: () => {
+      if (getNext()) {
+        getNext()!.previous = null;
+      }
 
-  if (current === null) return;
+      if (getPrevious()) {
+        getPrevious()!.next = null;
+      }
 
-  while (current.next) {
-    current = current.next;
-  }
+      setNext(null);
+      setPrevious(null);
+    },
+  });
 
-  return current;
+  return node();
 };
+
+const isOutOfBounds = (index: number, length: number) =>
+  index < 0 || index >= length;
+
+const isEmpty = (length: number) => length === 0;
+
+const getFastDirection = (index: number, length: number): Direction =>
+  index < length / 2 ? Direction.Forward : Direction.Backward;
 
 const createLinkedList = <T>(equalsFn = defaultEquals) => {
   const [getLength, setLength] = createState(0);
   const [getHead, setHead] = createState<_Node<T> | null>(null);
-  
-  const linkedList = (equalsFn = defaultEquals) => {
+  const [getLastNode, setLastNode] = createState<_Node<T> | null>(null);
 
-    const push = (element: T) => {
-      setLength(getLength() + 1);
+  const linkedList = (equalsFn = defaultEquals): LinkedList<T> => {
+    const getNodeAt = (index: number) => {
+      const length = getLength();
 
+      if (isOutOfBounds(index, length) || isEmpty(length)) {
+        return null;
+      }
+
+      const direction = getFastDirection(index, length);
+
+      switch (direction) {
+        case Direction.Forward: {
+          let current = getHead()!;
+          let i = 0;
+
+          while (i < index) {
+            current = current.next!;
+            i++;
+          }
+
+          return current;
+        }
+        case Direction.Backward: {
+          let current = getLastNode()!;
+          let i = length;
+
+          while (i > index) {
+            current = current.previous!;
+            i--;
+          }
+
+          return current;
+        }
+      }
+    };
+
+    const push = (element: T): LinkedList<T> => {
       const node = createNode(element);
-      const lastNode = getLastNode(getHead());
+
+      const lastNode = getLastNode();
 
       if (!lastNode) {
         setHead(node);
       } else {
+        node.previous = lastNode;
         lastNode.next = node;
       }
+
+      setLastNode(node);
+
+      setLength(getLength() + 1);
 
       return linkedList(equalsFn);
     };
 
+    const disconnectNode = (
+      node: _Node<T> | null
+    ): [LinkedList<T>, T | null] => {
+      if (!node) {
+        return [linkedList(equalsFn), null];
+      }
+
+      if (node === getHead()) {
+        setHead(node.next);
+      }
+
+      if (node === getLastNode()) {
+        setLastNode(node.previous);
+      }
+
+      node.disconnect();
+
+      setLength(getLength() - 1);
+
+      return [linkedList(equalsFn), node!.element];
+    };
+
+    const removeFirstNode = (): [LinkedList<T>, T | null] =>
+      disconnectNode(getHead());
+
+    const removeLastNode = (): [LinkedList<T>, T | null] =>
+      disconnectNode(getLastNode());
+
+    const removeIndex = (index: number): [LinkedList<T>, T | null] =>
+      disconnectNode(getNodeAt(index));
+
+    const removeAt = (index: number): [LinkedList<T>, T | null] => {
+      if (index === 0) {
+        return removeFirstNode();
+      }
+
+      if (index === getLength() - 1) {
+        return removeLastNode();
+      }
+
+      return removeIndex(index);
+    };
+
     return {
       push,
-      length: getLength,
+      removeAt,
+      isEmpty: isEmpty(getLength()),
+      size: getLength(),
     };
   };
 
