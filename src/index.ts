@@ -1,7 +1,7 @@
-import linkedList from "./linked-list";
+import createLinkedList from "./linked-list";
 
-const list = linkedList<number>();
+const linkedList = createLinkedList();
 
-const list1 = list.push(1).push(2).push(3);
-
-console.log(list1.length);
+linkedList.push(1);
+linkedList.push(2);
+linkedList.push(3);

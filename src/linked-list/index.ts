@@ -1,3 +1,4 @@
+import { createState } from "../state";
 import { defaultEquals } from "../utils";
 
 interface _Node<T> {
@@ -32,18 +33,16 @@ const getLastNode = <T>(head: _Node<T> | null) => {
 };
 
 const createLinkedList = <T>(equalsFn = defaultEquals) => {
-  let head: _Node<T> | null = null;
-  const setHead = (newHead: _Node<T> | null) => (head = newHead);
-
-  let length = 0;
-  const setLength = (newLength: number) => (length = newLength);
-
+  const [getLength, setLength] = createState(0);
+  const [getHead, setHead] = createState<_Node<T> | null>(null);
+  
   const linkedList = (equalsFn = defaultEquals) => {
+
     const push = (element: T) => {
-      setLength(length + 1);
+      setLength(getLength() + 1);
 
       const node = createNode(element);
-      const lastNode = getLastNode(head);
+      const lastNode = getLastNode(getHead());
 
       if (!lastNode) {
         setHead(node);
@@ -56,7 +55,7 @@ const createLinkedList = <T>(equalsFn = defaultEquals) => {
 
     return {
       push,
-      length,
+      length: getLength,
     };
   };
 
