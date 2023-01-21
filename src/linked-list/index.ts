@@ -1,5 +1,5 @@
 import { createState } from "../state";
-import { defaultEquals } from "../utils";
+import { decrement, defaultEquals, increment } from "../utils";
 
 interface _Node<T> {
   element: T;
@@ -122,8 +122,8 @@ const createLinkedList = <T>(equalsFn = defaultEquals) => {
       }
 
       setLastNode(node);
-
-      setLength(getLength() + 1);
+      
+      setLength(increment);
 
       return linkedList(equalsFn);
     };
@@ -145,7 +145,7 @@ const createLinkedList = <T>(equalsFn = defaultEquals) => {
 
       node.disconnect();
 
-      setLength(getLength() - 1);
+      setLength(decrement);
 
       return [linkedList(equalsFn), node!.element];
     };
