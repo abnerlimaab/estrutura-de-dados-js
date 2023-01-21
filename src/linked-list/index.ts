@@ -1,4 +1,4 @@
-import { createState } from "../state";
+import { stateCreator } from "../state";
 import { decrement, defaultEquals, increment } from "../utils";
 
 interface _Node<T> {
@@ -24,6 +24,8 @@ interface LinkedList<T> {
   size: number;
   toString: () => string;
 }
+
+const createState = stateCreator(state => console.info("Linked-list state size: ", state.length));
 
 const createNode = <T>(element: T): _Node<T> => {
   const [getNext, setNext] = createState<_Node<T> | null>(null);

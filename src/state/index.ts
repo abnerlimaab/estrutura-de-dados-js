@@ -1,17 +1,28 @@
-const state: any = [];
+export const stateCreator = (callback?: (state: Array<any>) => void) => {
+  const _state: Array<any> = [];
+  const executeCallback = () => callback && callback(_state);
 
-export const createState = <T>(initialState: T) => {
-  const index = state.length;
-  state[index] = initialState;
+  const createState = <T>(initialState: T) => {
+    const index = _state.length;
+    _state[index] = initialState;
 
-  const setState = (newState: ((state: T) => T) | T) => {
-    if (typeof newState === "function") {
-      // @ts-ignore
-      state[index] = newState(state[index] as T);
-    } else {
-      state[index] = newState;
-    }
-  }
-  const getState = () => state[index];
-  return [getState, setState] as const;
+    
+    const setState = (newState: ((state: T) => T) | T) => {
+      executeCallback();
+      
+      if (typeof newState === "function") {
+        // @ts-ignore
+        _state[index] = newState(_state[index] as T);
+      } else {
+        _state[index] = newState;
+      }
+    };
+    const getState = () => _state[index];
+
+    executeCallback();
+    
+    return [getState, setState] as const;
+  };
+
+  return createState;
 };
