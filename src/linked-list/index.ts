@@ -1,12 +1,6 @@
 import { stateCreator } from "../state";
+import { _Node, createNode } from "../node";
 import { decrement, defaultEquals, increment } from "../utils";
-
-interface _Node<T> {
-  element: T;
-  next: _Node<T> | null;
-  previous: _Node<T> | null;
-  disconnect: () => void;
-}
 
 enum Direction {
   Forward = "forward",
@@ -25,42 +19,9 @@ interface LinkedList<T> {
   toString: () => string;
 }
 
-const createState = stateCreator(state => console.info("Linked-list state size: ", state.length));
-
-const createNode = <T>(element: T): _Node<T> => {
-  const [getNext, setNext] = createState<_Node<T> | null>(null);
-  const [getPrevious, setPrevious] = createState<_Node<T> | null>(null);
-
-  const node = () => ({
-    element,
-    get next() {
-      return getNext();
-    },
-    set next(next: _Node<T> | null) {
-      setNext(next);
-    },
-    get previous() {
-      return getPrevious();
-    },
-    set previous(previous: _Node<T> | null) {
-      setPrevious(previous);
-    },
-    disconnect: () => {
-      if (getNext()) {
-        getNext()!.previous = null;
-      }
-
-      if (getPrevious()) {
-        getPrevious()!.next = null;
-      }
-
-      setNext(null);
-      setPrevious(null);
-    },
-  });
-
-  return node();
-};
+const useState = stateCreator((state) =>
+  console.info("Linked-list state size: ", state.length)
+);
 
 const isOutOfBounds = (index: number, length: number) =>
   index < 0 || index >= length;
@@ -71,9 +32,9 @@ const getFastDirection = (index: number, length: number): Direction =>
   index < length / 2 ? Direction.Forward : Direction.Backward;
 
 const createLinkedList = <T>(equalsFn = defaultEquals) => {
-  const [getLength, setLength] = createState(0);
-  const [getHead, setHead] = createState<_Node<T> | null>(null);
-  const [getLastNode, setLastNode] = createState<_Node<T> | null>(null);
+  const [getLength, setLength] = useState(0);
+  const [getHead, setHead] = useState<_Node<T> | null>(null);
+  const [getLastNode, setLastNode] = useState<_Node<T> | null>(null);
 
   const linkedList = (equalsFn = defaultEquals): LinkedList<T> => {
     const getNodeAt = (index: number) => {
@@ -119,12 +80,12 @@ const createLinkedList = <T>(equalsFn = defaultEquals) => {
       if (!lastNode) {
         setHead(node);
       } else {
-        node.previous = lastNode;
-        lastNode.next = node;
+        node.setPrevious(lastNode);
+        lastNode.setNext(node);
       }
 
       setLastNode(node);
-      
+
       setLength(increment);
 
       return linkedList(equalsFn);
@@ -138,11 +99,11 @@ const createLinkedList = <T>(equalsFn = defaultEquals) => {
       }
 
       if (node === getHead()) {
-        setHead(node.next);
+        setHead(node.getNext());
       }
 
       if (node === getLastNode()) {
-        setLastNode(node.previous);
+        setLastNode(node.getPrevious());
       }
 
       node.disconnect();
