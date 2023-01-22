@@ -9,9 +9,7 @@ export interface _Node<T> {
   disconnect: () => void;
 }
 
-const useState = stateCreator((state) =>
-  console.info("Node state size: ", state.length)
-);
+const useState = stateCreator();
 
 export const createNode = <T>(element: T): _Node<T> => {
   const [getNext, setNext] = useState<_Node<T> | null>(null);
