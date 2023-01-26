@@ -24,3 +24,8 @@ console.log(linkedList().getElementAt(9))
 console.log(linkedList().getElementAt(1))
 
 console.log(linkedList().size);
+
+console.log(linkedList().indexOf(1));
+console.log(linkedList().indexOf(2));
+console.log(linkedList().indexOf(10));
+console.log(linkedList().indexOf(11));

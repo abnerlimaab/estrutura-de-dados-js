@@ -5,6 +5,7 @@ import {
   defaultEquals,
   increment,
   isOutOfBounds,
+  whileCondition,
   whileIterator,
 } from "../utils";
 
@@ -20,14 +21,14 @@ interface LinkedList<T> {
   insert?: (element: T, index: number) => LinkedList<T>;
   getElementAt: (index: number) => T | null;
   remove?: (element: T) => LinkedList<T>;
-  indexOf?: (element: T) => number;
+  indexOf: (element: T) => number;
   removeAt: (index: number) => [LinkedList<T>, T | null];
   isEmpty: boolean;
   size: number;
   toString: () => string;
 }
 
-interface Iteration <T>{
+interface Iteration<T> {
   index: number;
   node: _Node<T> | null;
 }
@@ -49,6 +50,8 @@ const createLinkedList = <T>(equalsFn = defaultEquals): LinkedList<T> => {
         index: 0,
         node: null,
       });
+
+    const setIterationToHead = (): void => setIteration({ index: 0, node: getHead() });
 
     const isEmpty = (): boolean => getLength() === 0;
 
@@ -200,6 +203,27 @@ const createLinkedList = <T>(equalsFn = defaultEquals): LinkedList<T> => {
       return removeIndex(index);
     };
 
+    const forwardIteration = (): void => setIteration(({ index, node }) => ({
+      index: index === getLength() - 1 ? index : increment(index),
+      node: node?.getNext() ?? null,
+    }));
+
+    const indexOf = (element: T): number => {
+      setIterationToHead();
+
+      let isElementFound = false;
+
+      whileCondition(() => {
+        const { node } = getIteration();
+
+        isElementFound = equalsFn(element, node.element);
+
+        return !isElementFound && node?.getNext();
+      }, forwardIteration);
+
+      return isElementFound ? getIteration().index : -1;
+    };
+
     return {
       push,
       removeAt,
@@ -210,6 +234,7 @@ const createLinkedList = <T>(equalsFn = defaultEquals): LinkedList<T> => {
         return getLength();
       },
       getElementAt,
+      indexOf,
     };
   };
 
